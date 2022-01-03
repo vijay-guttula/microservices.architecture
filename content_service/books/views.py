@@ -1,7 +1,8 @@
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import BooksSerializer
+from rest_framework.views import APIView
+from .serializers import BooksSerializer, LikesReadSerializer
 from .models import *
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -26,11 +27,11 @@ class BooksViewSet(viewsets.ViewSet):
   
   # POST /api/v1/books
   def create(self, request): 
-    serializer = BooksSerializer(data=request.data)
-    serializer.is_valid(raise_exception=True)
-    serializer.save()
+    book_serializer = BooksSerializer(data=request.data)
+    book_serializer.is_valid(raise_exception=True)
+    book_serializer.save()
     
-    return Response({'status':'success', 'data': serializer.data}, status=status.HTTP_201_CREATED)
+    return Response({'status':'success', 'data': book_serializer.data}, status=status.HTTP_201_CREATED)
   
   # UPDATE /api/v1/books?id
   def update(self, request):
@@ -63,6 +64,24 @@ class NewContentsView(viewsets.ViewSet):
     serializer = BooksSerializer(books, many=True)
     
     return Response({'status':'success', 'data': serializer.data}, status=status.HTTP_200_OK)
+
+# POST /api/v1/books/likes-reads
+class LikesOrReadsView(APIView):
+  def post(self, request):
+    try:
+      # user = UsersModel(id='1')
+      # book = BooksModel
+      book = LikesReadsModel.objects.get(book_id='14', user_id='1')
+      likesreads_serializer = LikesReadSerializer(instance=book,data=request.data)
+      
+      return Response({'status':'success', 'data': likesreads_serializer.data}, status=status.HTTP_200_OK)
+    except ObjectDoesNotExist:
+      likesreads_serializer = LikesReadSerializer(data=request.data)
+      likesreads_serializer.is_valid(raise_exception=True)
+      likesreads_serializer.save()
+      
+      return Response({'status':'success', 'data': likesreads_serializer.data}, status=status.HTTP_200_OK)
+    
 
 # GET /api/v1/books/top
 class TopConentsView(viewsets.ViewSet):

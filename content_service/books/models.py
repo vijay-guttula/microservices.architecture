@@ -15,5 +15,5 @@ class BooksModel(models.Model):
 class LikesReadsModel(models.Model):
   user_id = models.ForeignKey(UsersModel, on_delete=models.CASCADE)
   book_id = models.ForeignKey(BooksModel, on_delete=models.CASCADE)
-  likes = models.BooleanField(default=False)
+  like = models.BooleanField(default=False)
   read = models.BooleanField(default=False)
