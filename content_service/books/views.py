@@ -7,10 +7,20 @@ from django.core.exceptions import ObjectDoesNotExist
 
 # Create your views here.
 class BooksViewSet(viewsets.ViewSet):
-  # GET /api/v1/books
-  def list(self, request): 
-    books = BooksModel.objects.all()
-    serializer = BooksSerializer(books, many=True)
+  # GET /api/v1/books?id
+  def retrieve(self, request):
+    try:
+      id = request.GET.get('id')
+      if id is None:
+        books = BooksModel.objects.all()
+        serializer = BooksSerializer(books, many=True)
+        return Response({'status':'success', 'data': serializer.data}, status=status.HTTP_200_OK)
+      
+      book = BooksModel.objects.get(id=id)
+      serializer = BooksSerializer(book)
+      
+    except ObjectDoesNotExist:
+      return Response({'status':'failure', 'data':'book does not exist'}, status=status.HTTP_404_NOT_FOUND)
     
     return Response({'status':'success', 'data': serializer.data}, status=status.HTTP_200_OK)
   
@@ -22,17 +32,6 @@ class BooksViewSet(viewsets.ViewSet):
     
     return Response({'status':'success', 'data': serializer.data}, status=status.HTTP_201_CREATED)
   
-  # GET /api/v1/book?id
-  def retrieve(self, request):
-    try:
-      id = request.GET.get('id')
-      book = BooksModel.objects.get(id=id)
-      serializer = BooksSerializer(book)
-    except ObjectDoesNotExist:
-      return Response({'status':'failure', 'data':'book does not exist'}, status=status.HTTP_404_NOT_FOUND)
-    
-    return Response({'status':'success', 'data': serializer.data}, status=status.HTTP_200_OK)
-    
   # UPDATE /api/v1/book?id
   def update(self, request):
     try:
