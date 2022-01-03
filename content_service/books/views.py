@@ -24,7 +24,7 @@ class BooksViewSet(viewsets.ViewSet):
     
     return Response({'status':'success', 'data': serializer.data}, status=status.HTTP_200_OK)
   
-  # POST /api/v1/book
+  # POST /api/v1/books
   def create(self, request): 
     serializer = BooksSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
@@ -32,7 +32,7 @@ class BooksViewSet(viewsets.ViewSet):
     
     return Response({'status':'success', 'data': serializer.data}, status=status.HTTP_201_CREATED)
   
-  # UPDATE /api/v1/book?id
+  # UPDATE /api/v1/books?id
   def update(self, request):
     try:
       id = request.GET.get('id')
@@ -45,7 +45,7 @@ class BooksViewSet(viewsets.ViewSet):
     
     return Response({'status':'success', 'data': serializer.data}, status=status.HTTP_202_ACCEPTED)
   
-  # DELETE /api/v1/book?id
+  # DELETE /api/v1/books?id
   def destroy(self, request):
     try:
       id = request.GET.get('id')
