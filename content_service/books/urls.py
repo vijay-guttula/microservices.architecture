@@ -7,10 +7,11 @@ urlpatterns = [
     })),
     path('books', BooksViewSet.as_view({
       'get':'list',
-      'post':'create', 
+       
     })),
-    path('books/<str:pk>', BooksViewSet.as_view({
+    path('book', BooksViewSet.as_view({
       'get':'retrieve',
+      'post':'create',
       'put':'update',
       'delete':'destroy', 
     })),

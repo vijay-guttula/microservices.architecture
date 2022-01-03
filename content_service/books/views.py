@@ -14,7 +14,7 @@ class BooksViewSet(viewsets.ViewSet):
     
     return Response({'status':'success', 'data': serializer.data}, status=status.HTTP_200_OK)
   
-  # POST /api/v1/books
+  # POST /api/v1/book
   def create(self, request): 
     serializer = BooksSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
@@ -22,20 +22,22 @@ class BooksViewSet(viewsets.ViewSet):
     
     return Response({'status':'success', 'data': serializer.data}, status=status.HTTP_201_CREATED)
   
-  # GET /api/v1/books/<str:id>
-  def retrieve(self, request, pk=None):
+  # GET /api/v1/book?id
+  def retrieve(self, request):
     try:
-      book = BooksModel.objects.get(id=pk)
+      id = request.GET.get('id')
+      book = BooksModel.objects.get(id=id)
       serializer = BooksSerializer(book)
     except ObjectDoesNotExist:
       return Response({'status':'failure', 'data':'book does not exist'}, status=status.HTTP_404_NOT_FOUND)
     
     return Response({'status':'success', 'data': serializer.data}, status=status.HTTP_200_OK)
     
-  # UPDATE /api/v1/books/<str:id>
-  def update(self, request, pk=None):
+  # UPDATE /api/v1/book?id
+  def update(self, request):
     try:
-      book = BooksModel.objects.get(id=pk)
+      id = request.GET.get('id')
+      book = BooksModel.objects.get(id=id)
       serializer = BooksSerializer(instance=book, data=request.data)
       serializer.is_valid(raise_exception=True)
       serializer.save()
@@ -44,10 +46,11 @@ class BooksViewSet(viewsets.ViewSet):
     
     return Response({'status':'success', 'data': serializer.data}, status=status.HTTP_202_ACCEPTED)
   
-  # DELETE /api/v1/books/<str:id>
-  def destroy(self, request, pk=None):
+  # DELETE /api/v1/book?id
+  def destroy(self, request):
     try:
-      book = BooksModel.objects.get(id=pk)
+      id = request.GET.get('id')
+      book = BooksModel.objects.get(id=id)
       book.delete()
     except ObjectDoesNotExist:
       return Response({'status':'failure', 'data':'book does not exist'}, status=status.HTTP_404_NOT_FOUND) 
