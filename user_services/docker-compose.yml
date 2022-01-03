@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  db:
+    image: mongo:5.0
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root
+    volumes:
+      - .dbdata:/data/db
+    ports:
+      - 27017:27017
+
+  backend:
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - MONGODB_CONNSTRING=mongodb://root:root@mongodb
+    ports:
+      - 3000:3000
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      - db
