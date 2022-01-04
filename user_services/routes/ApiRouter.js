@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken');
 const db = require('../models/index');
 const User = db.users;
 const secret = process.env.secret;
+const publish = require('../workers/producer');
 
 // user sign up
 apiRouter.post('/auth/signup', async (req, res) => {
@@ -32,6 +33,7 @@ apiRouter.post('/auth/signup', async (req, res) => {
   var token = jwt.sign({ id: user._id }, secret, {
     expiresIn: 86400,
   });
+  await publish(`${email}`);
   res.status(201).json({
     message: 'User Created Successfully',
     data: user,
@@ -69,5 +71,8 @@ apiRouter.post('/auth/login', async (req, res) => {
       "'No user with the entered email is present, please create your account'",
   });
 });
+
+// // user edit
+// apiRouter.put('/users:userId')
 
 module.exports = apiRouter;

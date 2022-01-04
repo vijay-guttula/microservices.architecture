@@ -2,6 +2,7 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
+from books.producer import publish
 from .serializers import BooksSerializer, LikesReadSerializer
 from .models import *
 from django.core.exceptions import ObjectDoesNotExist
@@ -15,6 +16,7 @@ class BooksViewSet(viewsets.ViewSet):
       if id is None:
         books = BooksModel.objects.all()
         serializer = BooksSerializer(books, many=True)
+        publish()
         return Response({'status':'success', 'data': serializer.data}, status=status.HTTP_200_OK)
       
       book = BooksModel.objects.get(id=id)
