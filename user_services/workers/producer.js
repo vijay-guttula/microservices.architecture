@@ -16,7 +16,10 @@ amqp.connect(CONN_URL, function (error0, connection) {
 });
 
 const publish = async (data) => {
-  channel.sendToQueue('admin', Buffer.from(JSON.stringify(data)));
+  channel.sendToQueue(
+    'user_service_content',
+    Buffer.from(JSON.stringify(data))
+  );
 };
 
 process.on('exit', (code) => {

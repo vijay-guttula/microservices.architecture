@@ -24,6 +24,7 @@ services:
       - DB_NAME=users
       - DB_PORT=27017
       - secret=asdasdasdadad
+    command: 'npm start'
     ports:
       - 3000:3000
     volumes:

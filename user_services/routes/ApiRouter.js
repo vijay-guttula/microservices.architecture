@@ -33,7 +33,10 @@ apiRouter.post('/auth/signup', async (req, res) => {
   var token = jwt.sign({ id: user._id }, secret, {
     expiresIn: 86400,
   });
-  await publish(`${email}`);
+  await publish({
+    operation: 'user_created',
+    email_id: email,
+  });
   res.status(201).json({
     message: 'User Created Successfully',
     data: user,

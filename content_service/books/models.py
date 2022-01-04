@@ -3,7 +3,7 @@ from django.utils import timezone
 
 # Create your models here.  
 class UsersModel(models.Model):
-  email_id = models.CharField(max_length=20)
+  email_id = models.CharField(max_length=100)
   
 class BooksModel(models.Model):
   title = models.CharField(max_length=100)
