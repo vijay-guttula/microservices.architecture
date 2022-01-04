@@ -16,7 +16,6 @@ class BooksViewSet(viewsets.ViewSet):
       if id is None:
         books = BooksModel.objects.all()
         serializer = BooksSerializer(books, many=True)
-        publish()
         return Response({'status':'success', 'data': serializer.data}, status=status.HTTP_200_OK)
       
       book = BooksModel.objects.get(id=id)

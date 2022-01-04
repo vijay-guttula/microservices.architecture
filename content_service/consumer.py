@@ -26,13 +26,18 @@ def callback(ch, method, properties, body):
   print('Received in admin')
   data = convertToJson(body)
   print(data)
-  if  data['operation'] == 'user_created':
-    user_data = {
+  operation = data['operation']
+  user_data = {
       'email_id': data['email_id']
     }
+  if  operation == 'user_created':
     user_serializer = UsersSerializer(data=user_data)
     user_serializer.is_valid(raise_exception=True)
     user_serializer.save()
+  
+  elif operation == 'user_deleted':
+    user = UsersModel.objects.get(email_id=user_data['email_id'])
+    user.delete()
     
 
 channel.basic_consume(queue='user_service_content', on_message_callback=callback)
