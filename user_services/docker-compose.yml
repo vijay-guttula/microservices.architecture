@@ -18,7 +18,12 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
-      - MONGODB_CONNSTRING=mongodb://root:root@mongodb
+      - DB_HOST=db
+      - DB_USER=root
+      - DB_PASSWORD=root
+      - DB_NAME=users
+      - DB_PORT=27017
+      - secret=asdasdasdadad
     ports:
       - 3000:3000
     volumes:
