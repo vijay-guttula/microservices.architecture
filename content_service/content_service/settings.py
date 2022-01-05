@@ -79,12 +79,13 @@ WSGI_APPLICATION = 'content_service.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'content_service',
-        'USER' : 'root',
-        'PASSWORD':'root',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'contentservice',
+        'USER': 'ssvijayg',
+        'PASSWORD':'password',
         'HOST': 'db',
-        'PORT':'3306'
+        'PORT': '5432'
+        
     }
 }
 

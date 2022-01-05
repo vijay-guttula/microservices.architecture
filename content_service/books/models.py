@@ -1,6 +1,6 @@
 from django.db import models
-from django.utils import timezone
-from adaptor.model import CsvModel
+# from django.utils import timezone
+# from adaptor.fields import DateField
 
 # Create your models here.  
 class UsersModel(models.Model):
@@ -9,7 +9,7 @@ class UsersModel(models.Model):
 class BooksModel(models.Model):
   title = models.CharField(max_length=100, unique=True)
   story = models.CharField(max_length=500)
-  date_time = models.DateTimeField(default=timezone.localtime)
+  date_published = models.DateField(auto_now=True)
   
 
 
@@ -19,11 +19,3 @@ class LikesReadsModel(models.Model):
   like = models.BooleanField(default=False)
   read = models.BooleanField(default=False)
   
-
-class MyCsvModel(CsvModel):
-  title = models.CharField(max_length=100, unique=True)
-  story = models.CharField(max_length=500)
-  class Meta:
-    dbModel = BooksModel
-    delimiter = ','
-    has_header = True

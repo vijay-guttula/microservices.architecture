@@ -1,29 +1,40 @@
 version: '3.8'
 services:
   db:
-    image: mysql:5.7.22
+    hostname: db
+    image: 'postgres:11.14'
     restart: always
     environment:
-      MYSQL_DATABASE: content_service
-      MYSQL_USER: root
-      MYSQL_PASSWORD: root
-      MYSQL_ROOT_PASSWORD: root
-    volumes:
-      - .dbdata:/var/lib/mysql
+      - POSTGRES_DB=contentservice
+      - POSTGRES_USER=ssvijayg
+      - POSTGRES_PASSWORD=password
     ports:
-      - 33066:3306
+      - 5432:5432
+    volumes:
+      - .dbdata:/var/lib/postgresql/data/
+
+  migration:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; python3 manage.py makemigrations && python3 manage.py migrate'
+    volumes:
+      - content_service_app:/app
+    depends_on:
+      - 'db'
 
   backend:
     build:
       context: .
       dockerfile: Dockerfile
-    command: 'python manage.py runserver 0.0.0.0:8000'
+    command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; python3 manage.py runserver 0.0.0.0:8000'
     ports:
       - 8000:8000
     volumes:
       - content_service_app:/app
     depends_on:
       - 'db'
+      - 'migration'
 
   queue:
     restart: always
