@@ -21,7 +21,7 @@ services:
     ports:
       - 8000:8000
     volumes:
-      - .:/app
+      - content_service_app:/app
     depends_on:
       - 'db'
 
@@ -33,3 +33,6 @@ services:
     command: 'python consumer.py'
     depends_on:
       - 'backend'
+
+volumes:
+  content_service_app:

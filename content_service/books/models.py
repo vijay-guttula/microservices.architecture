@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from adaptor.model import CsvModel
 
 # Create your models here.  
 class UsersModel(models.Model):
@@ -17,3 +18,12 @@ class LikesReadsModel(models.Model):
   book_id = models.ForeignKey('BooksModel', on_delete=models.CASCADE)
   like = models.BooleanField(default=False)
   read = models.BooleanField(default=False)
+  
+
+class MyCsvModel(CsvModel):
+  title = models.CharField(max_length=100, unique=True)
+  story = models.CharField(max_length=500)
+  class Meta:
+    dbModel = BooksModel
+    delimiter = ','
+    has_header = True

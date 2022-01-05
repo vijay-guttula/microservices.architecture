@@ -28,7 +28,10 @@ services:
     ports:
       - 3000:3000
     volumes:
-      - .:/app
+      - user_services_app:/app
       - /app/node_modules
     depends_on:
       - db
+
+volumes:
+  user_services_app:
