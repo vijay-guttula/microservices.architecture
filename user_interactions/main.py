@@ -1,7 +1,6 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 import requests
-from requests.api import request
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import UniqueConstraint
 from dataclasses import dataclass
@@ -46,8 +45,8 @@ class LikesReads(db.Model):
   read: bool
   
   like_read_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-  user_id = db.Column(db.String(200), db.ForeignKey('users.user_id'))
-  book_id = db.Column(db.Integer, db.ForeignKey('books.book_id'))
+  user_id = db.Column(db.String(200), db.ForeignKey('users.user_id',ondelete='CASCADE'))
+  book_id = db.Column(db.Integer, db.ForeignKey('books.book_id',ondelete='CASCADE'))
   like = db.Column(db.Boolean, default=False)
   read = db.Column(db.Boolean, default=False)  
   
@@ -63,27 +62,33 @@ def books():
 
 @app.route('/api/v1/book', methods=['POST'])
 def like():
-  user_id = request.data.get('user_id')
-  book_id = request.data.get('book_id')
-  operation = request.data.get('operation')
+  request_data = request.get_json()
+  user_id = request_data['user_id']
+  book_id = request_data['book_id']
+  operation = request_data['operation']
   
-  likeread = LikesReads.query.filter_by(user_id=user_id, book_id=book_id)
+  likeread = LikesReads.query.filter_by(user_id=user_id, book_id=book_id).first()
+  
+  print(likeread)
   
   if likeread:
     if operation == 'like':
       likeread.like = True
     else:
       likeread.read = True
+    
   else:
     if operation == 'like':
-      object = LikesReads(user_id=user_id, book_id=book_id, like=True)
+      likeread = LikesReads(user_id=user_id, book_id=book_id, like=True)
     else:
-      object = LikesReads(user_id=user_id, book_id=book_id, read=True)
-    db.session.add(object)
-      
-  db.session.commit()  
+      likeread = LikesReads(user_id=user_id, book_id=book_id, read=True)
+    db.session.add(likeread)
     
+  db.session.commit()
     
+  return jsonify({
+    'message':'success',
+  }) 
   
   
 
