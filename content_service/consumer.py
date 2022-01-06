@@ -15,7 +15,7 @@ connection = pika.BlockingConnection(params)
 
 channel = connection.channel()
 
-channel.queue_declare(queue='user_service_content')
+channel.queue_declare(queue='content_service')
 
 def convertToJson(body):
   data = json.loads(body)
@@ -23,11 +23,12 @@ def convertToJson(body):
   
 
 def callback(ch, method, properties, body):
-  print('Received in admin')
+  print('Received in content service')
   data = convertToJson(body)
   print(data)
   operation = data['operation']
   user_data = {
+      'user_id': data['user_id'],
       'email_id': data['email_id']
     }
   if  operation == 'user_created':
@@ -36,11 +37,17 @@ def callback(ch, method, properties, body):
     user_serializer.save()
   
   elif operation == 'user_deleted':
-    user = UsersModel.objects.get(email_id=user_data['email_id'])
+    user = UsersModel.objects.get(user_id=data['user_id'])
     user.delete()
-    
+  
+  elif operation == 'book_liked':
+    pass
+  
+  elif operation == 'book_read':
+    pass
 
-channel.basic_consume(queue='user_service_content', on_message_callback=callback)
+# channels
+channel.basic_consume(queue='content_service', on_message_callback=callback)
 
 print('Started Consuming in content_service')
 

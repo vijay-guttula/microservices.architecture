@@ -1,4 +1,5 @@
 import csv
+import json
 # django settings setup
 from django.conf import settings
 import django
@@ -7,6 +8,7 @@ settings.configure(DATABASES=DATABASES, INSTALLED_APPS=INSTALLED_APPS)
 django.setup()
 
 from books.models import BooksModel
+from books.producer import publish
 
 def run():
   csvfile = open('books.csv', newline='')
@@ -18,7 +20,11 @@ def run():
     if count == 1:
       pass
     else:
-      BooksModel.objects.create(title=record[0], story=record[1])
+      book = BooksModel.objects.create(title=record[0], story=record[1])
+      publish(routing_key='user_interactions', body={
+        'operation':'book_created',
+        'book_id': book.id
+      })
     count += 1
   
 

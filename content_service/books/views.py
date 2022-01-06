@@ -32,6 +32,11 @@ class BooksViewSet(viewsets.ViewSet):
     book_serializer.is_valid(raise_exception=True)
     book_serializer.save()
     
+    publish(routing_key='user_interactions', body={
+        'operation':'book_created',
+        'book_id': book_serializer.data['id']
+      })
+    
     return Response({'status':'success', 'data': book_serializer.data}, status=status.HTTP_201_CREATED)
   
   # UPDATE /api/v1/books?id
@@ -55,6 +60,11 @@ class BooksViewSet(viewsets.ViewSet):
       book.delete()
     except ObjectDoesNotExist:
       return Response({'status':'failure', 'data':'book does not exist'}, status=status.HTTP_404_NOT_FOUND) 
+    
+    publish(routing_key='user_interactions', body={
+        'operation':'book_deleted',
+        'book_id': id
+      })
     
     return Response({'status':'success'}, status=status.HTTP_204_NO_CONTENT)
   

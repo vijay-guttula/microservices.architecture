@@ -50,6 +50,7 @@ apiRouter.post('/auth/signup', async (req, res) => {
   });
   await publish({
     operation: 'user_created',
+    user_id: user._id,
     email_id: email,
   });
   res.status(201).json({
@@ -83,11 +84,12 @@ apiRouter.post('/auth/login', async (req, res) => {
 
 // user delete
 apiRouter.delete('/users', async (req, res) => {
-  const { email } = req.body;
+  const { user_id, email } = req.body;
   const deleteUser = await User.findOneAndDelete({ email });
   if (deleteUser) {
     publish({
       operation: 'user_deleted',
+      user_id: user_id,
       email_id: email,
     });
     res.status(204).json({

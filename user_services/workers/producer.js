@@ -16,10 +16,8 @@ amqp.connect(CONN_URL, function (error0, connection) {
 });
 
 const publish = async (data) => {
-  channel.sendToQueue(
-    'user_service_content',
-    Buffer.from(JSON.stringify(data))
-  );
+  channel.sendToQueue('content_service', Buffer.from(JSON.stringify(data)));
+  channel.sendToQueue('user_interactions', Buffer.from(JSON.stringify(data)));
 };
 
 process.on('exit', (code) => {
