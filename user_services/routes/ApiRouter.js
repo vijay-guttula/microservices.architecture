@@ -62,7 +62,7 @@ apiRouter.post('/auth/signup', async (req, res) => {
 
 // user login
 apiRouter.post('/auth/login', async (req, res) => {
-  const { email, password } = req.body;
+  const { password } = req.body;
   const checkPassword = await bcrypt.compareSync(password, findUser.password);
   if (checkPassword) {
     var token = jwt.sign({ id: findUser._id }, secret, {

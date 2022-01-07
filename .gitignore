@@ -2,7 +2,3 @@
 __pycache__
 node_modules
 *.env
-README*.md
-content_service/README.md
-user_interactions/README.md
-user_services/README.md
