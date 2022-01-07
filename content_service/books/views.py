@@ -75,16 +75,22 @@ class BooksViewSet(viewsets.ViewSet):
 # GET /api/v1/books/new
 class NewContentsView(viewsets.ViewSet):
   def list(self, request):
-    books = BooksModel.objects.order_by('-date_time')
-    serializer = BooksSerializer(books, many=True)
-    
-    return Response({'status':'success', 'data': serializer.data}, status=status.HTTP_200_OK)
+    try:
+      books = BooksModel.objects.order_by('-date_published')
+      serializer = BooksSerializer(books, many=True)
+      return Response({'status':'success', 'data': serializer.data}, status=status.HTTP_200_OK)
+    except Exception as e:
+      print(e)
+      return Response({'status':'failure', 'message':'error processing the request \n message: {}'.format(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 # GET /api/v1/books/top
 class TopConentsView(viewsets.ViewSet):
   def list(self, request):
-    user_id = request.GET.get('user_id')
-    books = LikesReadsModel.objects.filter(user_id=user_id).order_by('like')
-    serializer = LikesReadSerializer(books, many=True)
-    
-    return Response({'status':'success', 'data': serializer.data}, status=status.HTTP_200_OK)
+    try:
+      user_id = request.GET.get('user_id')
+      books = LikesReadsModel.objects.filter(user_id=user_id).order_by('like')
+      serializer = LikesReadSerializer(books, many=True)
+      return Response({'status':'success', 'data': serializer.data}, status=status.HTTP_200_OK)
+    except Exception as e:
+      print(e)
+      return Response({'status':'failure', 'message':'error processing the request \n message: {}'.format(e)}, status=status.HTTP_400_BAD_REQUEST)
