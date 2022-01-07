@@ -3,7 +3,7 @@ services:
   db:
     hostname: db
     image: mysql:5.7.22
-    restart: always
+    restart: unless-stopped
     environment:
       - MYSQL_DATABASE=user_interactions
       - MYSQL_USER=root
@@ -18,9 +18,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: 'python manage.py db init && python manage.py db migrate && python manage.py db upgrade'
+    command: sh -c "python manage.py db init && python manage.py db migrate && python manage.py db upgrade"
     volumes:
       - user_interactions_app:/app
+    links:
+      - db
     depends_on:
       - db
 
@@ -28,13 +30,14 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: python main.py
+    command: sh -c "python main.py"
     ports:
       - 8001:5000
     volumes:
       - user_interactions_app:/app
-    depends_on:
+    links:
       - db
+    depends_on:
       - migration
 
   queue:
@@ -42,9 +45,10 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: 'python consumer.py'
+    command: sh -c "python consumer.py"
+    links:
+      - db
     depends_on:
-      - migration
       - backend
 
 volumes:

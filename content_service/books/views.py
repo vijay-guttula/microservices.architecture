@@ -1,7 +1,6 @@
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.views import APIView
 from books.producer import publish
 from .serializers import BooksSerializer, LikesReadSerializer
 from .models import *
@@ -42,7 +41,7 @@ class BooksViewSet(viewsets.ViewSet):
     
     except Exception as e:
       print(e)
-      return Response({'status':'failure', 'message':e}, status=status.HTTP_400_BAD_REQUEST)
+      return Response({'status':'failure', 'message':'error processing the request \n message: {}'.format(e)}, status=status.HTTP_400_BAD_REQUEST)
   
   # UPDATE /api/v1/books?id
   def update(self, request):

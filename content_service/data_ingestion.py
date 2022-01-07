@@ -1,5 +1,4 @@
 import csv
-import json
 # django settings setup
 from django.conf import settings
 import django
