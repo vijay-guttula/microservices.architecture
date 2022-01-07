@@ -3,7 +3,7 @@ services:
   db:
     hostname: db
     image: 'postgres:11.14'
-    restart: always
+    restart: unless-stopped
     environment:
       - POSTGRES_DB=contentservice
       - POSTGRES_USER=ssvijayg
@@ -13,37 +13,29 @@ services:
     volumes:
       - .dbdata:/var/lib/postgresql/data/
 
-  migration:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; python manage.py makemigrations && python3 manage.py migrate'
-    volumes:
-      - content_service_app:/app
-    depends_on:
-      - 'db'
-
   backend:
     build:
       context: .
       dockerfile: Dockerfile
-    command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; python manage.py runserver 0.0.0.0:8000'
+    command: sh -c "python manage.py wait_for_db && python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000 "
     ports:
       - 8000:8000
     volumes:
       - content_service_app:/app
+    links:
+      - db
     depends_on:
-      - 'db'
-      - 'migration'
+      - db
 
   queue:
-    restart: always
+    restart: unless-stopped
     build:
       context: .
       dockerfile: Dockerfile
-    command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; python consumer.py'
+    command: sh -c "python manage.py wait_for_db && python manage.py makemigrations && python manage.py migrate && python consumer.py"
     depends_on:
-      - 'backend'
+      - db
+      - backend
 
 volumes:
   content_service_app:
