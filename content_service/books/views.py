@@ -88,7 +88,7 @@ class TopConentsView(viewsets.ViewSet):
   def list(self, request):
     try:
       user_id = request.GET.get('user_id')
-      books = LikesReadsModel.objects.filter(user_id=user_id).order_by('like')
+      books = LikesReadsModel.objects.filter(user_id=user_id).order_by('-like', '-read')
       serializer = LikesReadSerializer(books, many=True)
       return Response({'status':'success', 'data': serializer.data}, status=status.HTTP_200_OK)
     except Exception as e:
