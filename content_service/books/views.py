@@ -97,4 +97,8 @@ class LikesOrReadsView(APIView):
 # GET /api/v1/books/top
 class TopConentsView(viewsets.ViewSet):
   def list(self, request):
-    pass
+    user_id = request.GET.get('user_id')
+    books = LikesReadsModel.objects.filter(user_id=user_id).order_by('-like')
+    serializer = LikesReadSerializer(books, many=True)
+    
+    return Response({'status':'success', 'data': serializer.data}, status=status.HTTP_200_OK)

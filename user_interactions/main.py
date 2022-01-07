@@ -73,8 +73,16 @@ def like():
   
   if likeread:
     if operation == 'like':
+      if likeread.like == True:
+        return jsonify({
+          'message': 'Book already liked'
+        })
       likeread.like = True
     else:
+      if likeread.read == True:
+        return jsonify({
+          'message': 'Book already liked'
+        })
       likeread.read = True
     
   else:
@@ -85,9 +93,25 @@ def like():
     db.session.add(likeread)
     
   db.session.commit()
+  
+  publish(routing_key='content_service',body={
+    'operation':'book_liked' if operation == 'like' else 'book_read',
+    'like_read_id': likeread.like_read_id,
+    'user_id':likeread.user_id,
+    'book_id':likeread.book_id,
+    'like':likeread.like,
+    'read':likeread.read
+  })
     
   return jsonify({
     'message':'success',
+    'data':{
+      'like_read_id': likeread.like_read_id,
+      'user_id':likeread.user_id,
+      'book_id':likeread.book_id,
+      'like':likeread.like,
+      'read':likeread.read
+      }
   }) 
   
   
