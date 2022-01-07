@@ -27,17 +27,22 @@ class BooksViewSet(viewsets.ViewSet):
     return Response({'status':'success', 'data': serializer.data}, status=status.HTTP_200_OK)
   
   # POST /api/v1/books
-  def create(self, request): 
-    book_serializer = BooksSerializer(data=request.data)
-    book_serializer.is_valid(raise_exception=True)
-    book_serializer.save()
+  def create(self, request):
+    try:
+      book_serializer = BooksSerializer(data=request.data)
+      book_serializer.is_valid(raise_exception=True)
+      book_serializer.save()
+      
+      publish(routing_key='user_interactions', body={
+          'operation':'book_created',
+          'book_id': book_serializer.data['id']
+        })
+      
+      return Response({'status':'success', 'data': book_serializer.data}, status=status.HTTP_201_CREATED)
     
-    publish(routing_key='user_interactions', body={
-        'operation':'book_created',
-        'book_id': book_serializer.data['id']
-      })
-    
-    return Response({'status':'success', 'data': book_serializer.data}, status=status.HTTP_201_CREATED)
+    except Exception as e:
+      print(e)
+      return Response({'status':'failure', 'message':e}, status=status.HTTP_400_BAD_REQUEST)
   
   # UPDATE /api/v1/books?id
   def update(self, request):
@@ -76,29 +81,11 @@ class NewContentsView(viewsets.ViewSet):
     
     return Response({'status':'success', 'data': serializer.data}, status=status.HTTP_200_OK)
 
-# POST /api/v1/books/likes-reads
-class LikesOrReadsView(APIView):
-  def post(self, request):
-    try:
-      # user = UsersModel(id='1')
-      # book = BooksModel
-      book = LikesReadsModel.objects.get(book_id='14', user_id='1')
-      likesreads_serializer = LikesReadSerializer(instance=book,data=request.data)
-      
-      return Response({'status':'success', 'data': likesreads_serializer.data}, status=status.HTTP_200_OK)
-    except ObjectDoesNotExist:
-      likesreads_serializer = LikesReadSerializer(data=request.data)
-      likesreads_serializer.is_valid(raise_exception=True)
-      likesreads_serializer.save()
-      
-      return Response({'status':'success', 'data': likesreads_serializer.data}, status=status.HTTP_200_OK)
-    
-
 # GET /api/v1/books/top
 class TopConentsView(viewsets.ViewSet):
   def list(self, request):
     user_id = request.GET.get('user_id')
-    books = LikesReadsModel.objects.filter(user_id=user_id).order_by('-like')
+    books = LikesReadsModel.objects.filter(user_id=user_id).order_by('like')
     serializer = LikesReadSerializer(books, many=True)
     
     return Response({'status':'success', 'data': serializer.data}, status=status.HTTP_200_OK)
