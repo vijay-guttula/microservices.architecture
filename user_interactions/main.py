@@ -62,8 +62,9 @@ def users():
     'status':'OK',
     'data':users
     })
-  except:
-    abort(400, 'Error fetching users')
+  except Exception as e:
+    print(e)
+    abort(400, 'Error fetching users \n{}'.format(e))
 
 @app.route('/api/v1/books')
 def books():
@@ -73,8 +74,9 @@ def books():
     'status':'OK',
     'data':books
     })
-  except:
-    abort(400, 'Error fetching books')
+  except Exception as e:
+    print(e)
+    abort(400, 'Error fetching books \n{}'.format(e))
 
 @app.route('/api/v1/book', methods=['POST'])
 def like_read():
@@ -123,8 +125,25 @@ def like_read():
         }
       })
     
-  except:
-    abort(400, 'Error processing this request') 
+  except Exception as e:
+    print(e)
+    abort(400, 'Error processing this request \n{}'.format(e))
+
+@app.route('/api/v1/books/interactions')
+def like_reads_all():
+  try:
+    request_data = request.get_json()
+    user_id = request_data['user_id']
+    
+    like_reads = LikesReads.query.filter_by(user_id=user_id).all()
+    
+    return jsonify({
+      'status':'OK',
+      'data':like_reads
+      })
+  except Exception as e:
+    print(e)
+    abort(400, 'Error Processing the request with message \n{}'.format(e))
 
 if __name__ == "__main__":
   app.run(debug=True, host='0.0.0.0')
