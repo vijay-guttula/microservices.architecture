@@ -41,6 +41,8 @@ Create a .env file and add neccessary DB env vars neccesary and then
 
 Now to migrate the db and start the queue. start a new terminal and run the following commands <br>
 
+Please run all the db commands even if the db init or migrate throws an error related to already existing.
+
 - `$ docker-compose exec backend sh`
 - `$ python manage.py db init`
 - `$ python manage.py db migrate`
