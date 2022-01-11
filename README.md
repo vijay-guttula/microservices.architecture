@@ -2,7 +2,7 @@
 
 # Microservices + Events + Docker = A Perfect Trio
 
-## Built With
+## Comprises of
 
 - Content Service (Django, Postgres)
 - User Interactions (Flask, MySql)
