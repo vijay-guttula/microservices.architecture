@@ -50,6 +50,8 @@ Add a file named books.csv in the root folder and then run <br>
 
 Now to migrate the db and start the queue. start a new terminal and run the following commands <br>
 
+Please run all the db commands even if the db init or migrate throws an error related to already existing.
+
 - `$ docker-compose exec backend sh`
 - `$ python manage.py makemigrations`
 - `$ python manage.py migrate`
