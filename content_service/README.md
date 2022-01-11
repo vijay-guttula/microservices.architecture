@@ -39,3 +39,18 @@ Add a file named books.csv in the root folder and then run <br>
 
 `$ docker-compose exec backend sh` <br>
 `$ python data_ingestion.py`
+
+## Do the following in case of DB migration errors
+
+- Delete the .dbdata folder to delete the current database
+
+- `$ docker-compose down -v`
+
+- `$ docker-compose up db backend --build`
+
+Now to migrate the db and start the queue. start a new terminal and run the following commands <br>
+
+- `$ docker-compose exec backend sh`
+- `$ python manage.py makemigrations`
+- `$ python manage.py migrate`
+- `$ python consumer.py`

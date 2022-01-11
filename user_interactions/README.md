@@ -30,3 +30,19 @@ Create a .env file and add neccessary DB env vars neccesary and then
 ## To reflect the changes in the container
 
 `$ docker-compose down -v && docker-compose up --build`
+
+## Do the following in case of DB migration errors
+
+- Delete the .dbdata folder to delete the current database
+
+- `$ docker-compose down -v`
+
+- `$ docker-compose up db backend --build`
+
+Now to migrate the db and start the queue. start a new terminal and run the following commands <br>
+
+- `$ docker-compose exec backend sh`
+- `$ python manage.py db init`
+- `$ python manage.py db migrate`
+- `$ python manage.py db upgrade`
+- `$ python consumer.py`
